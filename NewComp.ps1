@@ -10,40 +10,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 	Exit
 }
 
-$WPFInstallUpgrade.Add_Click({
-	$isUpgradeSuccess = $false
-	try {
-		Start-Process powershell.exe -Verb RunAs -ArgumentList "-command winget upgrade --all  | Out-Host" -Wait -WindowStyle Normal
-		$isUpgradeSuccess = $true
-	}
-	catch [System.InvalidOperationException] {
-		Write-Warning "Allow Yes on User Access Control to Upgrade"
-	}
-	catch {
-		Write-Error $_.Exception
-	}
-	$ButtonType = [System.Windows.MessageBoxButton]::OK
-	$Messageboxbody = if ($isUpgradeSuccess) { "Upgrade Done" } else { "Upgrade was not succesful" }
-	$MessageIcon = [System.Windows.MessageBoxImage]::Information
-
-	[System.Windows.MessageBox]::Show($Messageboxbody, $AppTitle, $ButtonType, $MessageIcon)
-})
-
-$WPFinstall.Add_Click({
-	$wingetinstall = New-Object System.Collections.Generic.List[System.Object]
-
-		$wingetinstall.Add("Adobe.Acrobat.Reader.64-bit")
-		$wingetinstall.Add("Google.Chrome")
-		$wingetinstall.Add("7zip.7zip")
-	#	Possible future Install
-	#	$wingetinstall.Add("Microsoft.WindowsTerminal")
-	#	$wingetinstall.Add("Malwarebytes.Malwarebytes")
-	#	$wingetinstall.Add("Rufus.Rufus")
-	#	$wingetinstall.Add("TeamViewer.TeamViewer")
-	#	$wingetinstall.Add("Microsoft.Teams")
-	#	$wingetinstall.Add("JAMSoftware.TreeSize.Free")
-	#	$wingetinstall.Add("Microsoft.VisualStudio.2022.Community")
-		$wingetinstall.Add("Zoom.Zoom")
+	
 
 # GUI Specs
 Write-Host "Checking winget..."
@@ -90,56 +57,63 @@ else {
 
 
 
+$Merion2Install = @(
+	#Windows 10 Apps to install for Merion
+	"Zoom.Zoom"
+	"Google.Chrome"
+	#"Microsoft.Teams"
+	#"Microsoft.OneDrive"
+	"7zip.7zip"
+	#"Logitech.UnifyingSoftware"
+	"Adobe.Acrobat.Reader.64-bit"
+	#"Microsoft.WindowsTerminal"
+	#"Malwarebytes.Malwarebytes"
+	#"Rufus.Rufus"
+	#"TeamViewer.TeamViewer"
+	#"Microsoft.Teams"
+	#"JAMSoftware.TreeSize.Free"
+	#"Microsoft.VisualStudio.2022.Community"
+	)
 
-# Install all winget programs in new window
-$wingetinstall.ToArray()
-# Define Output variable
-$wingetResult = New-Object System.Collections.Generic.List[System.Object]
-foreach ( $node in $wingetinstall ) {
-	try {
-		Start-Process powershell.exe -Verb RunAs -ArgumentList "-command winget install -e --accept-source-agreements --accept-package-agreements --silent $node | Out-Host" -WindowStyle Normal
-		$wingetResult.Add("$node`n")
-		Start-Sleep -s 3
-		Wait-Process winget -Timeout 90 -ErrorAction SilentlyContinue
+	function InstallMerion()
+	{
+		Write-Host "Installing Apps For Merion"
+	
+		foreach ($Item2Install in $Merion2Install) {
+			
+			Write-Host "Trying to install $Item2Install."
+			try {
+				Start-Process powershell.exe -Verb RunAs -ArgumentList "-command winget upgrade -e --accept-source-agreements --accept-package-agreements --silent $Item2Install | Out-Host" -WindowStyle Normal
+				$wingetResult.Add("$Item2Install`n")
+				Start-Sleep -s 3
+				Wait-Process winget -Timeout 90 -ErrorAction SilentlyContinue
+			} catch {
+			
+			
+			$ButtonType = [System.Windows.MessageBoxButton]::OK
+			if ($wingetResult -ne "") {
+				$Messageboxbody = "Installed Programs `n$($Item2Install)"
+			}
+			else {
+				winget install -e --id $Item2Install
+				Start-Sleep -s 3
+				Wait-Process winget -Timeout 90 -ErrorAction SilentlyContinue
+				
+			}
+			$MessageIcon = [System.Windows.MessageBoxImage]::Information
+	
+			[System.Windows.MessageBox]::Show($Messageboxbody, $AppTitle, $ButtonType, $MessageIcon)
+		}
+
+			
+		}
+	
+		Write-Host "Finished Installing Apps For Merion"
 	}
-	catch [System.InvalidOperationException] {
-		Write-Warning "Allow Yes on User Access Control to Install"
-	}
-	catch {
-		Write-Error $_.Exception
-	}
-}
-$wingetResult.ToArray()
-$wingetResult | ForEach-Object { $_ } | Out-Host
-
-# Popup after finished
-$ButtonType = [System.Windows.MessageBoxButton]::OK
-if ($wingetResult -ne "") {
-	$Messageboxbody = "Installed Programs `n$($wingetResult)"
-}
-else {
-	$Messageboxbody = "No Program(s) are installed"
-}
-$MessageIcon = [System.Windows.MessageBoxImage]::Information
-
-[System.Windows.MessageBox]::Show($Messageboxbody, $AppTitle, $ButtonType, $MessageIcon)
-
-Write-Host "================================="
-Write-Host "---  Installs are Finished    ---"
-Write-Host "================================="
+	InstallMerion
 
 
 
-
-$Form                            = New-Object system.Windows.Forms.Form
-$Form.ClientSize                 = New-Object System.Drawing.Point(1050,1000)
-$Form.text                       = "Windows Toolbox By Chris Titus"
-$Form.StartPosition              = "CenterScreen"
-$Form.TopMost                    = $false
-$Form.BackColor                  = [System.Drawing.ColorTranslator]::FromHtml("#e9e9e9")
-$Form.AutoScaleDimensions     = '192, 192'
-$Form.AutoScaleMode           = "Dpi"
-$Form.AutoSize                = $True
-$Form.AutoScroll              = $True
-$Form.ClientSize              = '1050, 1000'
-$Form.FormBorderStyle         = 'FixedSingle'
+Write-Host "==========================="
+Write-Host "---  Script Finished    ---"
+Write-Host "==========================="
