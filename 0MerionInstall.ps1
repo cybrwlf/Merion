@@ -3,13 +3,28 @@ $Merion2Install = @(
     #Windows 10 Apps to install for Merion
     "Zoom.Zoom"
     "Google.Chrome"
-    #"Microsoft.Teams"
+    "7zip.7zip"
+    "Adobe.Acrobat.Reader.64-bit"
+	#"Malwarebytes.Malwarebytes"
+    	#"Microsoft.Teams"
 	#"Microsoft.OneDrive"
-	"7zip.7zip"
 	#"Logitech.UnifyingSoftware"
+	#"Notepad++.Notepad++"
+	#"Microsoft.PowerToys"
+	#"PuTTY.PuTTY"
+	#"Python.Python.3"
+	#"Microsoft.WindowsTerminal"
 
-	# Adobe Reader
-	"XPDP273C0XHQH2"
+	#"CPUID.CPU-Z"
+	#"GOG.Galaxy"
+	#"TechPowerUp.GPU-Z"
+	#"Inkscape.Inkscape"
+	#"Valve.Steam"
+	#"TeamViewer.TeamViewer"
+
+	#"JAMSoftware.TreeSize.Free"
+	#"Microsoft.VisualStudio.2022.Community"
+
 	)
 
 
